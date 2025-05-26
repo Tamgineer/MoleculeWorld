@@ -1,27 +1,61 @@
 #include "Particle.h"
 #include <cmath>
 
-
 void Particle::draw()
 {
-	DrawCircle(posX, posY, size, WHITE);
+	DrawCircle(pos.x, pos.y, size, WHITE);
+	
+#ifdef VELOCITY
+	DrawLine(pos.x, pos.y, pos.x + vel.x, pos.y + vel.y, RED);
+#endif // VELOCITY
+
+#ifdef ACCELERATION
+	DrawLine(pos.x + vel.x, pos.y + vel.y, pos.x + vel.x + acc.x, pos.y + vel.y + acc.y, ORANGE);
+#endif // ACCELERATION
+
+
 }
 
 void Particle::collide(Particle& other)
 {
 	if (other.destroyed == true) return;
 
-	float distX = posX - other.posX;
-	float distY = posY - other.posY;
-	float distance = std::sqrt((distX * distX) + (distY * distY));
+	Vector2 impact = other.pos - pos;
 
-	if (distance <= size + other.size) {
-		
-		float midpointx = (posX + other.posX) / 2;
-		float midpointy = (posY + other.posY) / 2;
+	float d = Vector2Length(impact);
 
-		velX += posX - midpointx;
-		velY += posY - midpointy;
+	if (d < (size + other.size)) {
+
+		float overlap = d - (size + other.size);
+
+		// Push the particles out so that they are not overlapping
+		Vector2 dir = impact;
+		dir = Vector2Normalize(dir) * 0.5f;
+		pos -= dir;
+		other.pos += dir;
+
+		//// Correct the distance!
+		d = size + other.size;
+		impact = Vector2Normalize(impact) * d;
+
+		//since all particles are mass of 1 for the time being just make arbitrary value
+
+		float mass = 2;
+
+		Vector2 diff = other.vel - vel;
+
+		//// Particle A (this)
+		float numerator = Vector2DotProduct(diff, impact);
+		float denominator = mass * d * d;
+		Vector2 deltaA = impact;
+		//1 is the mass of this particle
+		deltaA *= 2 * 1 * (numerator / denominator);
+		vel += deltaA;
+
+		//// Particle B (other)
+		Vector2 deltaB = impact;
+		deltaB *= -2 * 1 * (numerator / denominator);
+		other.vel += deltaB;
 
 		onCollide(other);
 	}
@@ -30,28 +64,30 @@ void Particle::collide(Particle& other)
 
 void Particle::update()
 {
+	acc += acc * -0.1f;
 
-	posX += velX * GetFrameTime();
-	posY += velY * GetFrameTime();
+	vel += acc * GetFrameTime();
 
-	if (posY + size > 450) {
-		posY = 450 - size;
-		velY *= -1;
+	pos += vel * GetFrameTime();
+
+	if (pos.y + size > 450) {
+		pos.y = 450 - size;
+		vel.y *= -1;
 	}
 
-	if (posX + size > 800) {
-		posX = 800 - size;
-		velX *= -1;
+	if (pos.x + size > 800) {
+		pos.x = 800 - size;
+		vel.x *= -1;
 	}
 
-	if (posY - size < 0) {
-		posY = size;
-		velY *= -1;
+	if (pos.y - size < 0) {
+		pos.y = size;
+		vel.y *= -1;
 	}
 
-	if (posX - size < 0) {
-		posX = size;
-		velX *= -1;
+	if (pos.x - size < 0) {
+		pos.x = size;
+		vel.x *= -1;
 	}
 
 }

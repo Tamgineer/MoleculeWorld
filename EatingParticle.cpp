@@ -7,5 +7,5 @@ void EatingParticle::onCollide(Particle& other) {
 
 void EatingParticle::draw()
 {
-	DrawCircle(posX, posY, size, RED);
+	DrawCircle(pos.x, pos.y, size, RED);
 }

@@ -1,22 +1,32 @@
+#define VELOCITY
+#define ACCELERATION
+
 #include <iostream>
 #include <vector>
 
 #include "raylib.h"
 
+#include "Bond.h"
 #include "EatingParticle.h"
 
 int main() {
 
 	InitWindow(800, 450, "Particles");
 
-    auto pop = std::vector<std::unique_ptr<Particle>>();
+    auto particles = std::vector<std::unique_ptr<Particle>>();
+    auto bonds     = std::vector <std::unique_ptr<Bond>>();
 
     for (size_t i = 0; i < 20; i++)
     {
-        pop.push_back(std::make_unique<Particle>(Particle(400 + i * 10, 225 + i * 10, 0, 0)));
+        particles.push_back(std::make_unique<Particle>(Particle(i * 11, i * 11, 100, 100)));
     }
 
-    pop.push_back(std::make_unique<EatingParticle>(EatingParticle(1,1,20,20)));
+    for (size_t i = 1; i < particles.size(); i++) {
+        bonds.push_back(std::make_unique<Bond>(Bond(*particles[0], *particles[i], 200, 100)));
+    }
+
+
+    //pop.push_back(std::make_unique<EatingParticle>(EatingParticle(1,1,20,20)));
 
     while (!WindowShouldClose())
     {
@@ -24,16 +34,21 @@ int main() {
 
         ClearBackground(BLACK);
 
-        for (size_t i = 0; i < pop.size(); i++) {
-            if (pop[i]->destroyed == true) {
-                pop.erase(pop.begin() + i);
+        for (size_t i = 0; i < bonds.size(); i++) {
+            bonds[i]->update();
+            bonds[i]->draw();
+        }
+
+        for (size_t i = 0; i < particles.size(); i++) {
+            if (particles[i]->destroyed == true) {
+                particles.erase(particles.begin() + i);
             }
-            for (size_t j = 0; j < pop.size(); j++) {
+            for (size_t j = 0; j < particles.size(); j++) {
                 if (i == j) continue;
-                pop[i]->collide(*pop[j]);
+                particles[i]->collide(*particles[j]);
             }
-            pop[i]->update();
-            pop[i]->draw();
+            particles[i]->update();
+            particles[i]->draw();
         }
 
         EndDrawing();
