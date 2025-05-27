@@ -1,6 +1,9 @@
 #include "Particle.h"
 #include <cmath>
 
+#define VELOCITY
+#define ACCELERATION
+
 void Particle::draw()
 {
 	DrawCircle(pos.x, pos.y, size, WHITE);
@@ -64,30 +67,37 @@ void Particle::collide(Particle& other)
 
 void Particle::update()
 {
-	acc += acc * -0.1f;
 
-	vel += acc * GetFrameTime();
+	//add some form of friction
+	Vector2 force = (Vector2Normalize(vel) * Vector2LengthSqr(vel) / 2) * -0.05f;
+
+	acc += force;
+
+	vel += acc * GetFrameTime() * 0.5f;
 
 	pos += vel * GetFrameTime();
 
+	//kill acceleration
+	acc = acc * 0;
+
 	if (pos.y + size > 450) {
 		pos.y = 450 - size;
-		vel.y *= -1;
+		vel.y *= -0.99;
 	}
 
 	if (pos.x + size > 800) {
 		pos.x = 800 - size;
-		vel.x *= -1;
+		vel.x *= -0.99;
 	}
 
 	if (pos.y - size < 0) {
 		pos.y = size;
-		vel.y *= -1;
+		vel.y *= -0.99;
 	}
 
 	if (pos.x - size < 0) {
 		pos.x = size;
-		vel.x *= -1;
+		vel.x *= -0.99;
 	}
 
 }

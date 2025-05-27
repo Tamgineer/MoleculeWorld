@@ -17,7 +17,7 @@ void Bond::update() {
 	float x = Vector2Length(force) - length;
 
 	force = Vector2Normalize(force);
-	force *= k * x * 0.1f;
+	force *= k * x;
 	a.acc += force * GetFrameTime();
 	force *= -1;
 	b.acc += force * GetFrameTime();
