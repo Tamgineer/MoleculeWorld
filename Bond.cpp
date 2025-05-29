@@ -11,15 +11,15 @@ void Bond::draw() {
 
 }
 
-void Bond::update() {
+void Bond::update(float delta) {
 	
 	Vector2 force = b.pos - a.pos;
 	float x = Vector2Length(force) - length;
 
 	force = Vector2Normalize(force);
 	force *= k * x;
-	a.acc += force * GetFrameTime();
+	a.acc += force * delta;
 	force *= -1;
-	b.acc += force * GetFrameTime();
+	b.acc += force * delta;
 
 }

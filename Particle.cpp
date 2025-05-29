@@ -2,7 +2,6 @@
 #include <cmath>
 
 #define VELOCITY
-#define ACCELERATION
 
 void Particle::draw()
 {
@@ -65,7 +64,7 @@ void Particle::collide(Particle& other)
 
 }
 
-void Particle::update()
+void Particle::update(float delta)
 {
 
 	//add some form of friction
@@ -73,31 +72,31 @@ void Particle::update()
 
 	acc += force;
 
-	vel += acc * GetFrameTime() * 0.5f;
+	vel += acc * delta * 0.5f;
 
-	pos += vel * GetFrameTime();
+	pos += vel * delta;
 
 	//kill acceleration
 	acc = acc * 0;
 
 	if (pos.y + size > 450) {
 		pos.y = 450 - size;
-		vel.y *= -0.99;
+		vel.y *= -1;
 	}
 
 	if (pos.x + size > 800) {
 		pos.x = 800 - size;
-		vel.x *= -0.99;
+		vel.x *= -1;
 	}
 
 	if (pos.y - size < 0) {
 		pos.y = size;
-		vel.y *= -0.99;
+		vel.y *= -1;
 	}
 
 	if (pos.x - size < 0) {
 		pos.x = size;
-		vel.x *= -0.99;
+		vel.x *= -1;
 	}
 
 }

@@ -10,6 +10,7 @@ Currently supports particle collision and reaction.
 
 - Base class for particles.
 - Base class for bonds
+- A molecule class which builds particles and bonds
 - Simple soft bodies can be simulated
 
 Particles functionality can be expanded.
@@ -20,8 +21,7 @@ Currently no implementation build implementation, you will need Raylibs to build
 TODO: 
 - add a cmake list
 - Add a way to simulate muscle contractions with bonds
-- Add a perception molecule
+- Add a perception particle
 - chemical reactions
-- Building molecules
 - Universe constants
-- Optimisation
+- Optimisation (reduce relying on classes)

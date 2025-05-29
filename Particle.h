@@ -27,7 +27,7 @@ public:
 	virtual void draw();
 	void collide(Particle& other);
 	virtual void onCollide(Particle& other) { };
-	virtual void update();
+	virtual void update(float delta);
 	void destroy();
 
 };
