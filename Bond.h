@@ -9,12 +9,10 @@ public:
 	virtual void draw();
 	virtual void update(float delta);
 
-
-private:
-	float length;
-	float k;
-
 	Particle& a;
 	Particle& b;
+
+	float length;
+	float k;
 };
 

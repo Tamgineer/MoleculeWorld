@@ -1,4 +1,5 @@
 #include "Molecule.h"
+#include "Neuron.h"
 
 Molecule::Molecule(int particleCount, moleculeType type) : particleCount(particleCount) {
 	nodes = std::vector<int>();
@@ -20,6 +21,14 @@ Molecule::Molecule(int particleCount, moleculeType type) : particleCount(particl
 		}
 	}
 	break;
+	case star: 
+	{
+		for (size_t i = 1; i < particleCount; i++) {
+			Vector2 v{ 0, i };
+			edges.emplace_back(v);
+		}
+	}
+	break;
 	default: {
 		for (size_t i = 0; i < particleCount - 1; i++) {
 			Vector2 v{ i, i + 1 };
@@ -33,7 +42,13 @@ Molecule::Molecule(int particleCount, moleculeType type) : particleCount(particl
 void Molecule::init(std::vector<std::shared_ptr<Particle>>& uParticles, std::vector<std::shared_ptr<Bond>>& uBonds)
 {
 	for (int i = 0; i < nodes.size(); i++) {
-		uParticles.emplace_back(std::make_shared<Particle>(400, 225, GetRandomValue(-1, 1), GetRandomValue(-1, 1)));
+		/*if (i == 0) {
+			uParticles.emplace_back(std::make_shared<Neuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
+		}
+		else {
+			uParticles.emplace_back(std::make_shared<Particle>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
+		}*/
+		uParticles.emplace_back(std::make_shared<Neuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
 		particles.emplace_back(uParticles[uParticles.size() - 1]);
 	}
 

@@ -8,7 +8,8 @@
 enum moleculeType
 {
 	fullyConnected,
-	minimum,
+	star,
+	minimum
 };
 
 class Molecule
@@ -19,6 +20,8 @@ public:
 	//building the molecule into the world goes here.
 	void init(std::vector<std::shared_ptr<Particle>>& uParticles, std::vector<std::shared_ptr<Bond>>& uBonds);
 	int particleCount{};
+
+	int id{};
 	
 
 	//NB: All particles must be connected regardless.

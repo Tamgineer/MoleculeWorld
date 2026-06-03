@@ -1,7 +1,8 @@
 #include "Particle.h"
-#include <cmath>
 
-#define VELOCITY
+#include "Constants.h"
+
+#include <cmath>
 
 void Particle::draw()
 {
@@ -68,7 +69,7 @@ void Particle::update(float delta)
 {
 
 	//add some form of friction
-	Vector2 force = (Vector2Normalize(vel) * Vector2LengthSqr(vel) / 2) * -0.05f;
+	Vector2 force = (Vector2Normalize(vel) * Vector2LengthSqr(vel) / 2) * -0.06f;
 
 	acc += force;
 
