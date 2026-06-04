@@ -14,5 +14,6 @@ public:
 
 	float length;
 	float k;
+	float weight{12};
 };
 

@@ -1,7 +1,9 @@
 #include "Molecule.h"
 #include "Neuron.h"
+#include "InputNeuron.h"
+#include "HiddenNeuron.h"
 
-Molecule::Molecule(int particleCount, moleculeType type) : particleCount(particleCount) {
+Molecule::Molecule(int particleCount, std::vector<std::shared_ptr<Particle>>& uP, std::vector<std::shared_ptr<Bond>>& uB, moleculeType type) : particleCount(particleCount), uParticles(uP), uBonds(uB) {
 	nodes = std::vector<int>();
 
 	for (int i = 0; i < particleCount; i++) {
@@ -29,31 +31,71 @@ Molecule::Molecule(int particleCount, moleculeType type) : particleCount(particl
 		}
 	}
 	break;
-	default: {
+	case minimum: 
+	{
 		for (size_t i = 0; i < particleCount - 1; i++) {
 			Vector2 v{ i, i + 1 };
 			edges.emplace_back(v);
 		}
-	}	
+	}
+	break;
+	case custom:
+	{
+		for (size_t i = 0; i < particleCount - 1; i++) {
+			Vector2 v{ i, i + 1 };
+			edges.emplace_back(v);
+		}
+	}
 	}
 
 }
 
-void Molecule::init(std::vector<std::shared_ptr<Particle>>& uParticles, std::vector<std::shared_ptr<Bond>>& uBonds)
+void Molecule::init()
 {
-	for (int i = 0; i < nodes.size(); i++) {
-		/*if (i == 0) {
-			uParticles.emplace_back(std::make_shared<Neuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
-		}
-		else {
-			uParticles.emplace_back(std::make_shared<Particle>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
-		}*/
+	if (customEnabled) {
+		
+		uParticles.emplace_back(std::make_shared<InputNeuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
+		particles.emplace_back(uParticles[uParticles.size() - 1]);
+
+		uParticles.emplace_back(std::make_shared<HiddenNeuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
+		particles.emplace_back(uParticles[uParticles.size() - 1]);
+
 		uParticles.emplace_back(std::make_shared<Neuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
 		particles.emplace_back(uParticles[uParticles.size() - 1]);
+		
+		for (int i = 0; i < edges.size(); i++) {
+			uBonds.emplace_back(std::make_shared<Bond>(*particles[edges[i].x], *particles[edges[i].y], 200, 200));
+			bonds.emplace_back(uBonds[uBonds.size() - 1]);
+		}
+	}
+	else {
+		for (int i = 0; i < nodes.size(); i++) {
+			uParticles.emplace_back(std::make_shared<InputNeuron>(GetScreenWidth() / 2, GetScreenHeight() / 2, 100, 100));
+			particles.emplace_back(uParticles[uParticles.size() - 1]);
+		}
+
+		for (int i = 0; i < edges.size(); i++) {
+			uBonds.emplace_back(std::make_shared<Bond>(*particles[edges[i].x], *particles[edges[i].y], 200, 200));
+			bonds.emplace_back(uBonds[uBonds.size() - 1]);
+		}
 	}
 
-	for (int i = 0; i < edges.size(); i++) {
-		uBonds.emplace_back(std::make_shared<Bond>(*particles[edges[i].x], *particles[edges[i].y], 200, 200));
-		bonds.emplace_back(uBonds[uBonds.size() - 1]);
+	LifeTime = 10000 * particleCount;
+}
+
+void Molecule::update()
+{
+	LifeTime -= GetFrameTime();
+	if (LifeTime <= 0) {
+		die();
 	}
+}
+
+void Molecule::die() 
+{
+	for (auto b : bonds) {
+		uBonds.erase(std::find(uBonds.begin(), uBonds.end(), b));
+	}
+
+	bonds.clear();
 }

@@ -16,25 +16,19 @@ int main() {
 	InitWindow(800, 800, "Particles");
 
     auto particles = std::vector<std::shared_ptr<Particle>>();
-    auto bonds     = std::vector <std::shared_ptr<Bond>>();
+    auto bonds     = std::vector<std::shared_ptr<Bond>>();
+    auto molecules = std::vector<std::shared_ptr<Molecule>>();
 
-    //Molecule a = Molecule(20, fullyConnected);
-    Molecule b = Molecule(10, fullyConnected);
+    for (int i = 0; i < 1; i++) {
+        molecules.emplace_back(std::make_shared<Molecule>(3, particles, bonds, custom));
+    }
 
-    //a.init(particles, bonds);
-    //b.init(particles, bonds);
-
-    /*for(auto var : particles)
-    {
-        var->vel.x = 200;
-        var->vel.y = 200;
-    }*/
-    b.init(particles, bonds);
+    for (auto m : molecules) {
+        m->init();
+    }
 
     std::cout << "particles: " << particles.size() << "\n";
     std::cout << "Bonds    : " << bonds.size() << "\n";
-
-    //pop.push_back(std::make_unique<EatingParticle>(EatingParticle(1,1,20,20)));
 
     while (!WindowShouldClose())
     {
@@ -42,17 +36,31 @@ int main() {
 
         ClearBackground(BLACK);
 
+        /*for (auto m : molecules) {
+            m->update();
+        }*/
+
+        //reset values
+        for (const auto& p : particles) {
+            if (auto n = std::dynamic_pointer_cast<Neuron>(p)) {
+                n->value = 0;
+            }
+        }
+
         for (size_t i = 0; i < bonds.size(); i++) {
             bonds[i]->k = 200;
 
-            //let's just make it so that neuron a has more control over neuron b
-            if (auto c = dynamic_cast<Neuron*>(&bonds[i]->a)) {
-                bonds[i]->k = c->stimulus() * 50;
+            //A -> B
+            auto a = dynamic_cast<Neuron*>(&bonds[i]->a);
+            auto b = dynamic_cast<Neuron*>(&bonds[i]->b);
+
+            if (a) {
+                bonds[i]->length = (a->stimulus() + 1) * 100;
             }
 
-            /*if (auto c = dynamic_cast<Neuron*>(&bonds[i]->b)) {
-                bonds[i]->k -= c->stimulus() * 50;
-            }*/
+            if (a && b) {
+                b->value += (a->stimulus() * bonds[i]->weight);
+            }
 
             bonds[i]->update(GetFrameTime());
             bonds[i]->draw();

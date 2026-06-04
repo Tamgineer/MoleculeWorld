@@ -2,7 +2,11 @@
 
 float Neuron::stimulus()
 {
-	return pos.x;
+	return bias;
+}
+
+void Neuron::input() {
+	//
 }
 
 void Neuron::response()
@@ -12,5 +16,5 @@ void Neuron::response()
 
 void Neuron::draw()
 {
-	DrawCircle(pos.x, pos.y, size, ColorFromHSV(240, 1, stimulus() / GetScreenWidth()));
+	DrawCircle(pos.x, pos.y, size, RED);
 }

@@ -30,5 +30,6 @@ public:
 	virtual void update(float delta);
 	void destroy();
 
+	virtual ~Particle() = default;
 };
 

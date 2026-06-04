@@ -9,19 +9,27 @@ enum moleculeType
 {
 	fullyConnected,
 	star,
-	minimum
+	minimum,
+	custom
 };
 
 class Molecule
 {
 public:
 	//definition of molecule happens here
-	Molecule(int particleCount, moleculeType type = minimum);
+	Molecule(int particleCount, std::vector<std::shared_ptr<Particle>>& uP, std::vector<std::shared_ptr<Bond>>& uB, moleculeType type = minimum);
 	//building the molecule into the world goes here.
-	void init(std::vector<std::shared_ptr<Particle>>& uParticles, std::vector<std::shared_ptr<Bond>>& uBonds);
+	void init();
+	
+	void update();
+	void die();
+	
 	int particleCount{};
 
 	int id{};
+	int LifeTime{};
+
+	bool customEnabled{false};
 	
 
 	//NB: All particles must be connected regardless.
@@ -29,6 +37,9 @@ public:
 private:
 	std::vector<std::shared_ptr<Particle>> particles;
 	std::vector<std::shared_ptr<Bond>> bonds;
+
+	std::vector<std::shared_ptr<Particle>>& uParticles;
+	std::vector<std::shared_ptr<Bond>>& uBonds;
 
 	std::vector<int> nodes;
 	std::vector<Vector2> edges;
