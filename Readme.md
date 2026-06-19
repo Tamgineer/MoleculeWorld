@@ -6,14 +6,13 @@
 ## what is this?
 A particle life simulation that I'm working on.
 
-Currently supports particle collision and reaction.
-
+Currently supports the following:
+- Particle collision and reaction.
 - Base class for particles.
 - Base class for bonds
 - A molecule class which builds particles and bonds
 - Simple soft bodies can be simulated
-
-Particles functionality can be expanded.
+- Particles functionality can be expanded.
 
 ## How to build project
 Currently no implementation build implementation, you will need Raylibs to build this project.
